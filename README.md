@@ -1,13 +1,9 @@
 ########## README ###########
-I stole this script from the nodejs sample from the aws website.
+This contains some script from the nodejs sample from the aws website.
 I intend to modify this script and learn from it.
 
 The original read me file has been left untouched below.
 ##############################
-
-
-
-
 
 
 
