@@ -41,23 +41,17 @@ function createBucket(bktName, btkReason) {
 /* -------------------------------------------- List all of my buckets --------------------------------------------- */
 
 function getBucketList() {
+    var bktData = {}
     // Create an S3 client
     var s3 = new AWS.S3();
-    
-    var bucketArray = []
-    
     s3.listBuckets(function(err, data) {
         if (err) { 
             console.error(err);
         } else {
-            for (var index in data.Buckets) {
-                var bucket =  data.Buckets[index];
-                bucketArray.push(bucket)
-                //console.log("Bucket: ", bucket.Name, ' : ', bucket.CreationDate);
-            }
+            bktData = data;
         }
     });
-    return bucketArray
+    return bktData;
 }
 /* -------------------------------------------------------------------------------------------------------------------------- */
 
@@ -101,8 +95,8 @@ function logBucketData(bktName, bktPurpose) {
 
 
 function Main() {
-    var fullBucketName = createBucket("MFPLiveBucket");
-    logBucketData(fullBucketName, "Live bucket for the project: MyFirstProject")
+    var bktLst = getBucketList()
+    console.log(bktLst)
 }
 
 Main();
