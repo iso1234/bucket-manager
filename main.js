@@ -50,8 +50,8 @@ function getBucketList() {
             if (err) { 
                 console.error(err);
             } else {
-                console.log("Step 1: " + data.Buckets[0].Name)
-                resolve(data);
+                console.log("Step 1: " + data.Buckets[0].Name);
+                resolve(data.Buckets[0].Name);
             }
         });
     });
@@ -99,7 +99,8 @@ function logBucketData(bktName, bktPurpose) {
 
 
 function Main() {
-    console.log("Step 2: " + getBucketList())
+    var firstBucket = getBucketList()
+    console.log("Step 2: " + firstBucket)
 }
 
 Main();
