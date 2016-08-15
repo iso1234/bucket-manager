@@ -9,6 +9,8 @@ var AWS = require('aws-sdk');
 var uuid = require('node-uuid');
 // jsonfile is used to write/read json files
 var jsonfile = require('jsonfile');
+// bluebird is used for promises
+var Promise_bluebird = require('bluebird')
 
 
 // Tested
@@ -41,17 +43,19 @@ function createBucket(bktName, btkReason) {
 /* -------------------------------------------- List all of my buckets --------------------------------------------- */
 
 function getBucketList() {
-    var bktData = {}
-    // Create an S3 client
-    var s3 = new AWS.S3();
-    s3.listBuckets(function(err, data) {
-        if (err) { 
-            console.error(err);
-        } else {
-            bktData = data;
-        }
+    return new Promise_bluebird(function(resolve, reject) {
+        // Create an S3 client
+        var s3 = new AWS.S3();
+        s3.listBuckets(function(err, data) {
+            if (err) { 
+                console.error(err);
+            } else {
+                console.log("Step 1: " + data.Buckets[0].Name)
+                resolve(data);
+            }
+        });
     });
-    return bktData;
+    
 }
 /* -------------------------------------------------------------------------------------------------------------------------- */
 
@@ -95,8 +99,7 @@ function logBucketData(bktName, bktPurpose) {
 
 
 function Main() {
-    var bktLst = getBucketList()
-    console.log(bktLst)
+    console.log("Step 2: " + getBucketList())
 }
 
 Main();
