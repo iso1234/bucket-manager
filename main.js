@@ -9,8 +9,6 @@ var AWS = require('aws-sdk');
 var uuid = require('node-uuid');
 // jsonfile is used to write/read json files
 var jsonfile = require('jsonfile');
-// bluebird is used for promises
-var Promise_bluebird = require('bluebird')
 
 
 // Tested
@@ -19,11 +17,11 @@ var Promise_bluebird = require('bluebird')
 function createBucket(bktName, btkReason) {
     // Create an S3 client
     var s3 = new AWS.S3();
-    
+
     // Create an empty bucket
     var bucketName = bktName + uuid.v4();
     s3.createBucket({Bucket: bucketName}, function () {});
-    
+
     // Return the entire bucket name
     return bucketName;
 }
@@ -42,20 +40,24 @@ function createBucket(bktName, btkReason) {
 // Needs testing
 /* -------------------------------------------- List all of my buckets --------------------------------------------- */
 
-function getBucketList() {
-    return new Promise_bluebird(function(resolve, reject) {
-        // Create an S3 client
-        var s3 = new AWS.S3();
-        s3.listBuckets(function(err, data) {
-            if (err) { 
-                console.error(err);
-            } else {
-                console.log("Step 1: " + data.Buckets[0].Name);
-                resolve(data.Buckets[0].Name);
-            }
-        });
+function getBucketList(callback) {
+    // Create an S3 client
+    var s3 = new AWS.S3();
+
+    var bucketArray = [];
+
+    s3.listBuckets(function(err, data) {
+        if (err) {
+            console.error(err);
+        } else {
+            for (var index in data.Buckets) {
+                bucket = data.Buckets[index];
+                bucketArray.push(bucket.Name);
+            };
+            callback(bucketArray);
+        }
     });
-    
+
 }
 /* -------------------------------------------------------------------------------------------------------------------------- */
 
@@ -68,12 +70,12 @@ function logBucketData(bktName, bktPurpose) {
     // Define the purpose of the bucket, this will be logged in a file in /Users/Isaac/AWS
     var bucketPurpose = bktPurpose;
     var bucketName = bktName;
-    
+
     // Log the name of the bucket and the purpose to a file
     var fName = "/Users/Isaac/AWS/bucketInfo.json";
     var fileData = {};
-    
-    
+
+
     // Get the data from the file
     jsonfile.readFile(fName, function(err, obj) {
         if (err) {
@@ -85,7 +87,7 @@ function logBucketData(bktName, bktPurpose) {
             saveData();
         }
     });
-    
+
     // Save the data
     function saveData() {
         jsonfile.writeFile(fName, fileData, {spaces: 4}, function(err) {
@@ -99,8 +101,9 @@ function logBucketData(bktName, bktPurpose) {
 
 
 function Main() {
-    var firstBucket = getBucketList()
-    console.log("Step 2: " + firstBucket)
+    getBucketList(function(list){
+        console.log(list);
+    });
 }
 
 Main();
